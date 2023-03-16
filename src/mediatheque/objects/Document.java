@@ -1,20 +1,20 @@
-package mediatheque.documents;
+package mediatheque.objects;
 
-import mediatheque.Abonne;
+import mediatheque.IAbonne;
 import mediatheque.IDocument;
 
 public abstract class Document implements IDocument{
-	
-	private int num;
-	protected Abonne emprunteur;
-	protected Abonne reserveur;
-	protected Etat etat;
 
-	public Document(int num) {
+	private int num;
+	private IAbonne emprunteur;
+	private IAbonne reserveur;
+	private Etat etat;
+
+	public Document(int num, String etat) {
 		this.num = num;
 		this.emprunteur = null;
 		this.reserveur = null;
-		this.etat = Etat.Disponible;
+		this.etat = Etat.get(etat);
 	}
 
 	@Override
@@ -23,22 +23,61 @@ public abstract class Document implements IDocument{
 	}
 
 	@Override
-	public Abonne emprunteur() {
+	public IAbonne emprunteur() {
 		return emprunteur;
 	}
 
 	@Override
-	public Abonne reserveur() {
+	public IAbonne reserveur() {
 		return reserveur;
+	}
+	
+	protected Etat etat() {
+		return etat;
+	}
+	
+	protected void setEmprunteur(IAbonne ab) {
+		emprunteur = ab;
+	}
+
+	protected void setReserveur(IAbonne ab) {
+		reserveur = ab;
 	}
 
 	@Override
-	public abstract void reservationPour(Abonne ab);
+	public abstract void reservationPour(IAbonne ab) throws RestrictionException;
 	
 	@Override
-	public  abstract void empruntPar(Abonne ab);
+	public  abstract void empruntPar(IAbonne ab) throws RestrictionException;
 	
 	@Override
-	public abstract void retour();
+	public void retour() {
+		etat = Etat.Disponible;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Document other = (Document) obj;
+		return num == other.num;
+	}
+
+	protected void setEtat(Etat e) {
+		this.etat = e;
+	}
+
+	@Override
+	public String toString() {
+		return "Document {num= " + num + ", type= "+ this.getClass().getName() + ", etat= " + etat + "}";
+	}
+
+	
+	
 	
 }
