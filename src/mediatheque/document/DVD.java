@@ -1,54 +1,41 @@
-package mediatheque.objects;
+package mediatheque.document;
+
+import java.sql.Date;
 
 import mediatheque.IAbonne;
 
 public class DVD extends Document{
+	private static final long serialVersionUID = 1L;
 	
-	private String titre;
 	private boolean adulte;
 	
-	public DVD(int num, String titre, boolean adulte, String etat) {
-		super(num, etat);
-		this.titre = titre;
-		this.adulte  = adulte;
+	public DVD(int num, String titre, int adulte, Date dateRetour) {
+		super(num, titre, dateRetour);
+		this.adulte  = adulte == 1 ? true : false;
 	}
 	
 	@Override
 	public void reservationPour(IAbonne ab) throws RestrictionException {
-		if(estDisponible() && !estReservePar(ab) && (adulte && ab.estAdulte())) {
-			ab.reserver(this);
-			setReserveur(ab);
-			setEtat(Etat.Reservé);
+		if(adulte && !ab.estAdulte()) {
+			throw new RestrictionException(this);
 		}
-		throw new RestrictionException(this);
+		super.reservationPour(ab);
 	}
 	
 	@Override
 	public void empruntPar(IAbonne ab) throws RestrictionException {
-		if( (estDisponible() || estReservePar(ab)) && (adulte && ab.estAdulte()) ) {
-			ab.emprunter(this);
-			setEtat(Etat.Emprunté);
-			setEmprunteur(ab);
+		if(adulte && !ab.estAdulte()) {
+			throw new RestrictionException(this);
 		}
-		throw new RestrictionException(this);
+		super.empruntPar(ab);
 
 	}
 
-	private boolean estDisponible() throws RestrictionException {
-		if(etat() == Etat.Disponible)
-			return true;
-		return false;
-	}
-
-	private boolean estReservePar(IAbonne ab) throws RestrictionException {
-		if(etat() == Etat.Reservé && reserveur() == ab)
-			return true;
-		return false;
-	}
 
 	@Override
 	public String toString() {
-		return "DVD " + titre;
+		return "DVD - " + getTitre() + " - Reférence numéro : " + numero();
 	}
+
 
 }

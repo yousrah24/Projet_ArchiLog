@@ -32,8 +32,7 @@ public class DatabaseConnection {
 
     public ResultSet up(String table) throws SQLException {
 			var stmt = connection.createStatement();
-			var res = stmt.executeQuery("SELECT * FROM " + table);
-			connection.commit();
+			ResultSet res = stmt.executeQuery("select * from " + table);
 			return res;
 	}
 
@@ -46,9 +45,9 @@ public class DatabaseConnection {
     }
     
     
-    public void update(int numDoc, String etat) throws SQLException {
-		var stmt = connection.prepareStatement("UPDATE Document SET etat = ?, set idAbonne = NULL WHERE idDoc = ?");
-		stmt.setString(1,etat);
+    public void updateEtat(int numDoc, int etat) throws SQLException {
+		var stmt = connection.prepareStatement("UPDATE Document SET Disponible = ? WHERE idDoc = ?");
+		stmt.setInt(1,etat);
 		stmt.setInt(2, numDoc);
 		stmt.execute();
 		connection.commit();
@@ -56,7 +55,7 @@ public class DatabaseConnection {
 	}
 	
 	public void update(int numDoc, int numAb) throws SQLException{
-		var stmt = connection.prepareStatement("UPDATE Document SET idAbonnee = ? WHERE idDoc = ?");
+		var stmt = connection.prepareStatement("UPDATE Document SET idAbonne = ? WHERE idDoc = ?");
 		stmt.setInt(1,numAb);
 		stmt.setInt(2, numDoc);
 		stmt.execute();

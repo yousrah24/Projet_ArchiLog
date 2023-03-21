@@ -8,7 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import mediatheque.IAbonne;
-import mediatheque.objects.Abonne;
+import mediatheque.object.Abonne;
+import mediatheque.object.ConcurrentAbonne;
 
 public class AbonneeRepository {
 	
@@ -25,9 +26,9 @@ public class AbonneeRepository {
 	private void init() throws ClassNotFoundException, SQLException {
 		ResultSet res = connection.up("Abonne");
 		while (res.next()) {
-			Date d = res.getDate(2);
-			Abonne ab = new Abonne(res.getInt(1), res.getString(3),d);
-			listeAbonnee.add(ab);
+			Date d = res.getDate("DateNaissance");
+			IAbonne ab = new Abonne(res.getInt("idAbonne"), res.getString("nom"),d);
+			listeAbonnee.add(new ConcurrentAbonne(ab));
 		}
 		res.close();
 	}

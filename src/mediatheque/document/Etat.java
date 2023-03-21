@@ -1,15 +1,15 @@
-package mediatheque.objects;
+package mediatheque.document;
 
 
 public enum Etat {
-	Disponible("disponible"), Emprunté("emprunte"), Reservé("reserve");
-	private String etat;
+	Disponible(1), Emprunté(0), Reservé(-1);
+	private int etat;
 	
-	private Etat(String etat) {
-		this.etat = etat;
+	private Etat(int i) {
+		this.etat = i;
 	}
 
-	public static Etat get(String etat) {
+	public static Etat get(int etat) {
 		for (Etat e : Etat.values())
 			if (e.etat == etat)
 				return e;

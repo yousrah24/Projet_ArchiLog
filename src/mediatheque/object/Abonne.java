@@ -1,4 +1,5 @@
-package mediatheque.objects;
+package mediatheque.object;
+
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -10,7 +11,9 @@ import java.util.Objects;
 import mediatheque.IAbonne;
 import mediatheque.IDocument;
 
-public class Abonne implements IAbonne {
+public class Abonne implements IAbonne{
+	
+	private static final long serialVersionUID = 1L;
 	private int num;
 	private String nom;
 	private Date dateNaiss;
@@ -58,8 +61,8 @@ public class Abonne implements IAbonne {
 	@Override
 	public boolean estAdulte() {
 		// Date de naissance
-		LocalDate birthdate = LocalDate.of(dateNaiss.getYear(), dateNaiss.getMonth(), dateNaiss.getDay());
-
+		LocalDate birthdate = LocalDate.parse(dateNaiss.toString());
+		
         // Date actuelle
         LocalDate now = LocalDate.now();
 
@@ -70,6 +73,11 @@ public class Abonne implements IAbonne {
 	}
 
 
+	@Override
+	public void retour(IDocument doc) {
+		listeReservation.remove(doc);
+	}
+	
 	@Override
 	public void reserver(IDocument doc) {
 		listeReservation.add(doc);

@@ -1,9 +1,17 @@
 package mediatheque;
 
-import mediatheque.objects.RestrictionException;
+import java.io.Serializable;
+import java.sql.Date;
+import java.time.LocalDateTime;
 
-public interface IDocument {
+import mediatheque.document.RestrictionException;
+
+public interface IDocument extends Serializable{
 	int numero();
+	
+	LocalDateTime getTime();
+	
+	Date getDateRetour();
 	/**
 	 * @return null  si pas emprunté ou pas réservé
 	 */
@@ -23,5 +31,7 @@ public interface IDocument {
 	 * @brief retour d’un document ou annulation d‘une réservation
 	 */
 	void retour();
+	
+	
 	
 }

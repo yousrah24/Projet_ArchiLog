@@ -2,16 +2,19 @@ package mediatheque.repository;
 
 
 
+import java.lang.reflect.Constructor;
+
 import java.lang.reflect.InvocationTargetException;
-import java.sql.ResultSet;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
 import mediatheque.IDocument;
 import mediatheque.Mediatheque;
-import mediatheque.objects.Document;
-import mediatheque.objects.RestrictionException;
+import mediatheque.document.ConcurrentDocument;
+import mediatheque.document.Document;
+import mediatheque.document.RestrictionException;
 
 public class DocumentRepository {
 	private DatabaseConnection connection;
@@ -25,21 +28,20 @@ public class DocumentRepository {
 	
 	@SuppressWarnings("unchecked")
 	private void init() throws RestrictionException, SQLException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException{
-		ResultSet res = connection.up("Document");
+		var res = connection.up("Document");
 		while (res.next()) {
-			String className = res.getString(2);
+			String className = "mediatheque.document." + res.getString("Type");
 			Class< ? extends Document> c = (Class<? extends Document>)Class.forName(className);
-			IDocument d = c.getConstructor(Document.class)
-					.newInstance(
-						res.getInt(1), 
-						res.getString(3),
-						res.getBoolean(4), 
-						res.getString(5)
-					);
-			if(res.getInt(5) != 0)
-				d.empruntPar(Mediatheque.getAbonne(res.getInt(5)));
+			Date date = res.getDate("dateRetour");
+			 // Récupération du constructeur paramètres
+            Constructor<?> constructor = c.getConstructor(
+            		int.class, String.class, 
+            		int.class, Date.class);
+			IDocument d = (IDocument) constructor.newInstance(res.getInt("idDoc"), res.getString("Titre"), res.getInt("Adulte"),date);
 			
-			listeDocuments.add(d);
+			if(res.getInt("idAbonne") != 0)
+				d.empruntPar(Mediatheque.getAbonne(res.getInt("idAbonne")));
+			listeDocuments.add(new ConcurrentDocument(d));
 		}
 		res.close();
 		
@@ -58,8 +60,8 @@ public class DocumentRepository {
 		return null;
 	}
 	
-	 public void update(int numDoc, String etat) throws SQLException {
-		 connection.update(numDoc, etat);
+	 public void updateEtat(int numDoc, int etat) throws SQLException {
+		 connection.updateEtat(numDoc, etat);
 	 }
 	 
 	 public void update(int numDoc, int numAb) throws SQLException{

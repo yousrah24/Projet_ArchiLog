@@ -1,4 +1,4 @@
-package mediatheque.objects;
+package mediatheque.document;
 
 import mediatheque.IDocument;
 
@@ -19,14 +19,13 @@ public class RestrictionException extends Exception {
 	public String toString() {
 		if(doc!= null) {
 			if(doc.reserveur() != null)
-				return "Ce document est déjà réservé, il sera libre à ";
+				return "Ce document est réservé jusqu’à " + doc.getTime().toString();
 			else if(doc.emprunteur() != null)
-				return "Ce document n'est pas disponible";
+				return "Ce document est déjà emprunté, Il sera disponible le " + doc.getDateRetour().toString();
 			else
-				return "Ce document n'est pas de votre âge";
+				return "Vous n’avez pas l’âge pour emprunter ce document";
 		}
-		
-		return "Document non existant";
+		return "Document non existant ou Abonné non existant";
 	}
 
 }

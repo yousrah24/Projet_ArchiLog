@@ -1,34 +1,39 @@
 package mediatheque;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.List;
 
-import mediatheque.objects.RestrictionException;
+import mediatheque.document.RestrictionException;
 import mediatheque.repository.AbonneeRepository;
 import mediatheque.repository.DocumentRepository;
 
-public class Mediatheque {
-	private static DocumentRepository documents;
-	private static AbonneeRepository abonnees;
+public class Mediatheque implements Serializable{
+	private static final long serialVersionUID = 1L;
+	private static DocumentRepository lesDocuments;
+	private static AbonneeRepository lesAbonnees;
 	
 	public Mediatheque(String user, String password) throws ClassNotFoundException, RestrictionException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException {
-		documents = new DocumentRepository(user, password);
-		abonnees = new AbonneeRepository(user, password);
-		
+		lesAbonnees = new AbonneeRepository(user, password);
+		lesDocuments = new DocumentRepository(user, password);		
 	}
 	
 
-	public List<IAbonne> getListeAbonnee() {
-		return abonnees.getListeAbonnee();
+	public static List<IAbonne> getListeAbonnee() {
+		return lesAbonnees.getListeAbonnee();
+	}
+	
+	public static List<IDocument> getListeDocument() {
+		return lesDocuments.getListeDocuments();
 	}
 
 	
 	public static IDocument getDocument(int numDoc) {
-		return documents.findDocumentByNum(numDoc);
+		return lesDocuments.findDocumentByNum(numDoc);
 	}
 	public static IAbonne getAbonne(int numAb) {
-		return abonnees.findAbonneByNum(numAb);
+		return lesAbonnees.findAbonneByNum(numAb);
 	}
 	
 	public boolean estEmprunte(int numDoc) {
@@ -43,11 +48,11 @@ public class Mediatheque {
 		IDocument doc = getDocument(numDoc);
 		if(ab != null && doc != null) {
 			doc.empruntPar(ab);
-			documents.update(doc.numero(), ab.numero());
-			documents.update(doc.numero(),"emprunte");
+			lesDocuments.update(numDoc, numAb);
+			lesDocuments.updateEtat(numDoc,0);
 		}
-			
-		throw new RuntimeException("Numéro d'abonné incorrect ou numéro de document incorrect");
+		else
+			throw new RestrictionException(doc);
 	}
 	
 	
@@ -55,10 +60,10 @@ public class Mediatheque {
 		IDocument doc = getDocument(numDoc);
 		if(doc != null) {
 			doc.retour();
-			documents.update(doc.numero(),"disponible");
+			lesDocuments.updateEtat(doc.numero(),1);
 		}
-			
-		throw new RestrictionException();
+		else
+			throw new RestrictionException(doc);
 	}
 	
 	
@@ -68,13 +73,13 @@ public class Mediatheque {
 		if(ab != null && doc != null) {
 			doc.reservationPour(ab);
 		}
-			
-		throw new RestrictionException();
+		else
+			throw new RestrictionException(doc);
 	}
 	
-	public void close() throws SQLException {
-		 abonnees.close();
-		 documents.close();
+	public static void close() throws SQLException {
+		 lesAbonnees.close();
+		 lesDocuments.close();
 	 }
 	
 
