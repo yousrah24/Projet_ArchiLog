@@ -1,26 +1,20 @@
+package appli.serveur;
 
 
 import java.io.BufferedReader;
+
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.SQLException;
-import java.util.Scanner;
+import mediatheque.document.RestrictionException;
 
-import mediatheque.Mediatheque;
-import mediatheque.objects.RestrictionException;
-
-public class ServiceRetour implements Runnable{
-	private static int num;
-	private Mediatheque mediatheque;
-	private Socket socket;
+public class ServiceRetour extends Service{
 	
-	
-	public ServiceRetour(Mediatheque mediatheque, Socket socket) {
-		ServiceRetour.num++;
-		this.mediatheque = mediatheque;
-		this.socket = socket;
+	public ServiceRetour(Socket socket) {
+		super(socket);
 	}
 
 
@@ -33,7 +27,8 @@ public class ServiceRetour implements Runnable{
 			
 			socketOut.println("Quel est le numéro de document ?");
 			int numDoc = Integer.parseInt(socketIn.readLine());
-			
+			System.out.println("Connexion " + num + " a reçu "+ numDoc + " comme numéro de document");
+
 			try {
 				mediatheque.retour(numDoc);
 			} catch (RestrictionException e) {
@@ -50,16 +45,4 @@ public class ServiceRetour implements Runnable{
 		}
 	
 	}
-	protected void finalize(){
-		 try {
-			socket.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-	}
-	
-	public void lancer() {
-		new Thread(this).start();	
-	}
-
 }
