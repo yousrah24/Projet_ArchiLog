@@ -1,4 +1,4 @@
-package appli.serveur;
+package bserveur;
 import java.net.Socket;
 
 import mediatheque.Mediatheque;

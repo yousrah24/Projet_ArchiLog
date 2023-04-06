@@ -1,14 +1,14 @@
-package mediatheque.document;
+package document;
 
 
 import java.sql.Date;
 import java.time.LocalDateTime;
+
 import mediatheque.IAbonne;
 import mediatheque.IDocument;
 
 public class ConcurrentDocument implements IDocument{
 	
-	private static final long serialVersionUID = 1L;
 	private IDocument doc;
 	
 	

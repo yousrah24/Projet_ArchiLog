@@ -1,9 +1,9 @@
 package mediatheque;
 
-import java.io.Serializable;
 import java.sql.Date;
+import java.util.List;
 
-public interface IAbonne extends Serializable{
+public interface IAbonne {
 
 	int numero();
 
@@ -19,6 +19,9 @@ public interface IAbonne extends Serializable{
 
 	void retourner(IDocument doc);
 
-	void retour(IDocument doc);
+
+	List<IDocument> getListeEmprunt();
+
+	List<IDocument> getListeReservation();
 
 }

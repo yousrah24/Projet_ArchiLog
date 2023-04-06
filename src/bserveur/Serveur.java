@@ -1,13 +1,13 @@
-package appli.serveur;
+package bserveur;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+
+
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.SQLException;
 
-import mediatheque.Mediatheque;
-import mediatheque.document.RestrictionException;
+import database.DatabaseConnection;
+
 
 
 
@@ -28,7 +28,7 @@ public class Serveur implements Runnable{
 				Service service = this.serviceClass.getConstructor(Socket.class).newInstance(socket);
 				service.lancer();
 			}
-		} catch (IOException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+		} catch (Exception e) {
 				System.err.println("Pb sur le port d'ecoute :\n"+e);
 		} 
 	}
@@ -39,7 +39,10 @@ public class Serveur implements Runnable{
 	
 	 // restituer les ressources --> finalize
 	protected void finalize() throws Throwable {
-			try {this.listen_socket.close();} catch (IOException e1) {}
+			try {
+				this.listen_socket.close(); 
+				DatabaseConnection.close();
+			} catch (IOException e1) {}
 	}
 
 }

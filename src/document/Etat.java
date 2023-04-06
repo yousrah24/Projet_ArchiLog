@@ -1,4 +1,4 @@
-package mediatheque.document;
+package document;
 
 
 public enum Etat {

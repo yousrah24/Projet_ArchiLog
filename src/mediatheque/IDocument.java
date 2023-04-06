@@ -1,12 +1,12 @@
 package mediatheque;
 
-import java.io.Serializable;
+
 import java.sql.Date;
 import java.time.LocalDateTime;
 
-import mediatheque.document.RestrictionException;
+import document.RestrictionException;
 
-public interface IDocument extends Serializable{
+public interface IDocument {
 	int numero();
 	
 	LocalDateTime getTime();
@@ -19,7 +19,7 @@ public interface IDocument extends Serializable{
 	IAbonne reserveur() ; // Abonné qui a réservé ce document
 	/**
 	 * @pre  ni réservé ni emprunté
-	 * @param ab
+	 * @param ab l'abonné
 	 */
 	void reservationPour(IAbonne ab) throws RestrictionException ;
 	/**

@@ -1,29 +1,35 @@
-package mediatheque.repository;
+package database;
 
 
 import java.sql.Date;
+
+
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
+import client.Abonne;
+import client.ConcurrentAbonne;
 import mediatheque.IAbonne;
-import mediatheque.object.Abonne;
-import mediatheque.object.ConcurrentAbonne;
+import mediatheque.Repository;
 
-public class AbonneeRepository {
+public class AbonneeRepository implements Repository {
 	
 	private List<IAbonne> listeAbonnee;
 	
 	private DatabaseConnection connection;
 
-	public AbonneeRepository(String user, String password) throws ClassNotFoundException, SQLException {
+	public AbonneeRepository(String user, String password) throws Exception{
 		this.listeAbonnee = new LinkedList<>();
 		connection = new  DatabaseConnection(user, password);
 		init();
 	}
 
-	private void init() throws ClassNotFoundException, SQLException {
+	/**
+	 * @brief recuperation des abonnée dans la database
+	 * @throws Exception
+	 */
+	private void init() throws Exception{
 		ResultSet res = connection.up("Abonne");
 		while (res.next()) {
 			Date d = res.getDate("DateNaissance");
@@ -33,7 +39,12 @@ public class AbonneeRepository {
 		res.close();
 	}
 
-	public IAbonne findAbonneByNum(int numAb) {
+	@Override
+	/**
+	 * @brief cherche un abonne selon son numero
+	 * @param numAb
+	 */
+	public IAbonne findByNum(int numAb) {
 		for (IAbonne abonne : listeAbonnee) {
 			if(abonne.numero() == numAb)
 				return abonne;
@@ -41,11 +52,22 @@ public class AbonneeRepository {
 		return null;
 	}
 
-	public List<IAbonne> getListeAbonnee() {
+	@Override
+	/**
+	 * @brief renvoie le repertoir des abonnés
+	 */
+	public List<IAbonne> getRepository() {
 		return listeAbonnee;
 	}
 	
-	public void close() throws SQLException {
-		 connection.close();
-	 }
+	@Override
+	public void update(int numDoc, int numAb) {
+		
+	}
+
+	@Override
+	public void updateEtat(int numDoc, int i) {
+		
+	}
+	
 }

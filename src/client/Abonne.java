@@ -1,4 +1,4 @@
-package mediatheque.object;
+package client;
 
 
 import java.sql.Date;
@@ -13,7 +13,6 @@ import mediatheque.IDocument;
 
 public class Abonne implements IAbonne{
 	
-	private static final long serialVersionUID = 1L;
 	private int num;
 	private String nom;
 	private Date dateNaiss;
@@ -28,18 +27,25 @@ public class Abonne implements IAbonne{
 		listeReservation = new ArrayList<>();
 	}
 	
-
+	
+	/**
+	 * @brief renvoie le numero d'un abonné
+	 */
 	@Override
 	public int numero() {
 		return num;
 	}
 
-
+	/**
+	 * @brief renvoie le nom d'un abonné
+	 */
 	@Override
 	public String getNom() {
 		return nom;
 	}
-	
+	/**
+	 * @brief renvoie la date de naissance d'un abonné
+	 */
 	@Override
 	public Date getDateNaiss() {
 		return dateNaiss;
@@ -57,32 +63,38 @@ public class Abonne implements IAbonne{
 		Abonne other = (Abonne) obj;
 		return Objects.equals(nom, other.nom) && num == other.num;
 	}
-
+	
+	/**
+	 * @brief verifie si un abonné a plus de 16ans
+	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean estAdulte() {
 		// Date de naissance
-		LocalDate birthdate = LocalDate.parse(dateNaiss.toString());
+		LocalDate birthdate = LocalDate.of(dateNaiss.getYear(), dateNaiss.getMonth(), dateNaiss.getDay());
 		
         // Date actuelle
         LocalDate now = LocalDate.now();
 
-        // Calcul de la différence entre les deux dates
+        // Calcul de la différence entre les deux date
         Period diff = Period.between(birthdate, now);
         
 		return diff.getYears() >= 16;
 	}
 
-
-	@Override
-	public void retour(IDocument doc) {
-		listeReservation.remove(doc);
-	}
 	
+	/**
+	 * @brief reserve un document et l'ajoute dans sa liste
+	 * @param doc le document
+	 */
 	@Override
 	public void reserver(IDocument doc) {
 		listeReservation.add(doc);
 	}
-
+	/**
+	 * @brief emprunte un document et l'ajoute dans sa liste 
+	 * @param doc le document
+	 */
 	@Override
 	public void emprunter(IDocument doc) {
 		if(listeReservation.contains(doc)) 
@@ -90,6 +102,10 @@ public class Abonne implements IAbonne{
 		listeEmprunt.add(doc);
 	}
 	
+	/**
+	 * @brief retoune un document en le supprimant dans sa liste de document empruntés
+	 * @param doc le document
+	 */
 	@Override
 	public void retourner(IDocument doc) {
 		listeEmprunt.remove(doc);
@@ -99,6 +115,22 @@ public class Abonne implements IAbonne{
 	@Override
 	public String toString() {
 		return "Abonne {num= " + num + ", nom= " + nom + ", dateNaiss= " + dateNaiss + "}";
+	}
+
+	/**
+	 * @brief renvoie la liste des documents emprunté 
+	 */
+	@Override
+	public List<IDocument> getListeEmprunt() {
+		return listeEmprunt;
+	}
+
+	/**
+	 * @brief renvoie la liste des documents reservé
+	 */
+	@Override
+	public List<IDocument> getListeReservation() {
+		return listeReservation;
 	}
 	
 	
